@@ -11,6 +11,7 @@ use App\Http\Controllers\API\EmployeeController;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\VerificationController;
 use App\Http\Controllers\API\PasswordController;
+use App\Http\Controllers\API\NextOfKinController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,31 +35,27 @@ Route::group(['middleware' => ['json']], function () {
     //Authenticated Routes Group
     Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
 
-    // Investors Route
-    Route::group(['prefix' => 'investor', 'middleware' => ['investor']], function () {
-        Route::put('profile', [InvestorController::class, 'update']);
-        Route::post('bank', [InvestorController::class, 'update']);
+        // Investors Route
+        Route::group(['prefix' => 'investor', 'middleware' => ['investor']], function () {
+            Route::put('profile', [InvestorController::class, 'update']);
 
-        Route::get('banks', [UserBankController::class, 'index']);
-        Route::post('bank', [UserBankController::class, 'store']);
-        Route::delete('bank/{id}',[UserBankController::class, 'delete']);
-        Route::post('resolve-account',[UserBankController::class, 'resolveAccount']);
+            Route::get('banks', [UserBankController::class, 'index']);
+            Route::post('bank', [UserBankController::class, 'store']);
+            Route::delete('bank/{id}', [UserBankController::class, 'delete']);
+            Route::post('resolve-account', [UserBankController::class, 'resolveAccount']);
 
+            Route::get('next-of-kins', [NextOfKinController::class, 'index']);
+            Route::post('next-of-kin', [NextOfKinController::class, 'store']);
+            Route::put('next-of-kin/{id}', [NextOfKinController::class, 'update']);
+            Route::delete('next-of-kin/{id}', [NextOfKinController::class, 'delete']);
+        });
+
+        // Admins Route
+        Route::group(['prefix' => 'admin', 'middleware' => ['admin']], function () {
+        });
+
+        // Employees Route
+        Route::group(['prefix' => 'employee', 'middleware' => ['employee']], function () {
+        });
     });
-
-    // Admins Route
-    Route::group(['prefix' => 'admin', 'middleware' => ['admin']], function () {
-
-    });
-
-    // Employees Route
-    Route::group(['prefix' => 'employee', 'middleware' => ['employee']], function () {
-
-    });
-
-
 });
-
-});
-
-
