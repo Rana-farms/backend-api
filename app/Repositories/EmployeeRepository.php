@@ -1,15 +1,15 @@
 <?php
 
 namespace App\Repositories;
-use App\Models\User;
+use App\Models\Employee;
 
 class EmployeeRepository implements RepositoryInterfaces\EmployeeRepositoryInterface
 {
 
-    public function create(array $data)
+    public function create(int $userId)
     {
-        $user = User::create( $data );
-        return $user;
+        $employee = Employee::create([ 'user_id' =>  $userId ]);
+        return $employee;
     }
 
     public function update(int $id, array $data)

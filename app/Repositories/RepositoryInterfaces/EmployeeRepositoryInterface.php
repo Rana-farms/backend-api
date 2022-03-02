@@ -4,7 +4,7 @@ namespace App\Repositories\RepositoryInterfaces;
 
 interface EmployeeRepositoryInterface
 {
-    public function create(array $data);
+    public function create(int $userId);
     public function update(int $id, array $data);
 
 }

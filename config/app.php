@@ -15,6 +15,9 @@ return [
 
     'name' => env('APP_NAME', 'Laravel'),
 
+    'secretKey' => env('PAYSTACK_SECRET_KEY'),
+    'publicKey' => env('PAYSTACK_PUBLIC_KEY'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment

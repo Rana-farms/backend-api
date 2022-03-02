@@ -1,10 +1,9 @@
 <?php
 
 namespace App\Http\Requests;
-
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateUserRequest extends FormRequest
+class AddUserBankRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -14,6 +13,8 @@ class CreateUserRequest extends FormRequest
     public function authorize()
     {
         return true;
+
+
     }
 
     /**
@@ -24,9 +25,9 @@ class CreateUserRequest extends FormRequest
     public function rules()
     {
         return [
-            'email' => ['required', 'email', 'max:255'],
-            'password' =>  ['required', 'string', 'max:255', 'min:6', 'confirmed'],
-            
+            'bank_id' =>  ['required', 'integer'],
+            'account_name' =>  ['required', 'string', 'max:255'],
+            'account_no' =>  ['required', 'digits:10'],
         ];
     }
 }

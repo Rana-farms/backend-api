@@ -52,6 +52,7 @@ class AuthController extends Controller
     {
         $userData = $request->validated();
         $userData['password'] = Hash::make( $userData['password'] );
+        $userData['role_id'] = 9;
         $newUser = $this->userRepository->create( $userData );
 
         $createProfile = $this->createProfile( $newUser );
@@ -65,8 +66,16 @@ class AuthController extends Controller
 
     }
 
-    public function createProfile()
+    public function createProfile( $user )
     {
+        $roleId = $user->role_id;
 
+        if( $roleId == 9 ){
+            $createInvestorProfile = $this->investorRepository->create( $user->id );
+        }
+
+        if( $roleId == 18 ){
+            $createEmployeeProfile = $this->employeeRepository->create( $user->id );
+        }
     }
 }
