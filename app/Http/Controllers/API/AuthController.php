@@ -2,27 +2,26 @@
 
 namespace App\Http\Controllers\API;
 use App\Repositories\RepositoryInterfaces\UserRepositoryInterface;
-use App\Repositories\RepositoryInterfaces\InvestorRepositoryInterface;
-use App\Repositories\RepositoryInterfaces\EmployeeRepositoryInterface;
 use App\Http\Requests\CreateUserRequest;
 use App\Http\Requests\LoginRequest;
 use NextApps\VerificationCode\VerificationCode;
 use App\Http\Resources\UserResource;
 use App\Http\Controllers\Controller;
+use App\Models\NextOfKin;
+use App\Models\Bank;
+use App\Models\UserBank;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Wallet;
 use App\Traits\ApiResponse;
 
 class AuthController extends Controller
 {
 
-    public function __construct(UserRepositoryInterface $userRepository,
-                                InvestorRepositoryInterface $investorRepository,
-                                EmployeeRepositoryInterface $employeeRepository
+    public function __construct(UserRepositoryInterface $userRepository
+
     ){
         $this->userRepository = $userRepository;
-        $this->investorRepository = $investorRepository;
-        $this->employeeRepository = $employeeRepository;
     }
 
     /**
@@ -54,8 +53,11 @@ class AuthController extends Controller
         $userData['password'] = Hash::make( $userData['password'] );
         $userData['role_id'] = 9;
         $newUser = $this->userRepository->create( $userData );
+        $userData['user_id'] = $newUser->id;
 
-        $createProfile = $this->createProfile( $newUser );
+        $createWallet = Wallet::create(['user_id' => $newUser->id]);
+        $createNextOfKin = $this::createNextOfKin( $userData );
+        $createUserBank = $this::createUserBank( $userData );
 
         VerificationCode::send( $newUser->email );
 
@@ -63,19 +65,33 @@ class AuthController extends Controller
         $user = new UserResource( $newUser );
 
         return ApiResponse::successResponseWithToken( $user, 'Registration successful', 200, $accessToken );
-
     }
 
-    public function createProfile( $user )
+    public static function createNextOfKin( $data )
     {
-        $roleId = $user->role_id;
+        $nextOfKinData = [
+            'user_id' => $data['user_id'],
+            'fullname' => $data['next_of_kin_fullname'],
+            'address' => $data['next_of_kin_address'],
+            'phone' => $data['next_of_kin_phone'],
+            'relationship' => $data['relationship'],
+        ];
 
-        if( $roleId == 9 ){
-            $createInvestorProfile = $this->investorRepository->create( $user->id );
-        }
+        NextOfKin::create( $nextOfKinData );
+    }
 
-        if( $roleId == 18 ){
-            $createEmployeeProfile = $this->employeeRepository->create( $user->id );
-        }
+    public static function createUserBank( $data )
+    {
+        $getBank = Bank::find( $data['bank_id'] );
+
+            $userBankData = [
+                'user_id' => $data['user_id'],
+                'bank_id' => $data['bank_id'],
+                'account_name' => $data['account_name'],
+                'code' => $getBank->paystack_code,
+                'account_no' => $data['account_no'],
+            ];
+
+            UserBank::create( $userBankData );
     }
 }

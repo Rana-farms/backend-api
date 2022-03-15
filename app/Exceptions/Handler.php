@@ -1,9 +1,12 @@
 <?php
 
 namespace App\Exceptions;
-
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
+use Exception;
+use App\Traits\ApiResponse;
 
 class Handler extends ExceptionHandler
 {
@@ -32,10 +35,31 @@ class Handler extends ExceptionHandler
      *
      * @return void
      */
+    // public function register()
+    // {
+    //     $this->reportable(function (Throwable $e) {
+    //         //
+    //     });
+    // }
+
     public function register()
     {
-        $this->reportable(function (Throwable $e) {
-            //
-        });
-    }
+         $this->renderable(function(Exception $e, $request) {
+             return $this->handleException($request, $e);
+         });
+     }
+
+     public function handleException($request, Exception $exception)
+     {
+
+         if($exception instanceof HttpException) {
+            return ApiResponse::errorResponse($exception->getMessage(), 400);
+         }
+
+         if($exception instanceof NotFoundHttpException) {
+            return ApiResponse::errorResponse('The specified URL cannot be  found.', 404);
+         }
+
+     }
+
 }

@@ -5,7 +5,9 @@ use App\Repositories\RepositoryInterfaces\NextOfKinRepositoryInterface;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\NextOfKinRequest;
 use App\Http\Resources\NextOfKinResource;
+use App\Http\Resources\UserResource;
 use App\Models\NextOfKin;
+use App\Models\User;
 use App\Traits\ApiResponse;
 
 class NextOfKinController extends Controller
@@ -24,47 +26,27 @@ class NextOfKinController extends Controller
 
     public function store(NextOfKinRequest $request)
     {
+        $userID = auth()->user()->id;
+        $user = User::find( $userID );
         $nextOfKinData =  $request->validated();
-        $nextOfKinData['user_id'] = auth()->user()->id;
-        $nextOfKin = $this->nextOfKinRepository->create( $nextOfKinData );
-        $nextOfKinResource = new NextOfKinResource( $nextOfKin );
-        return ApiResponse::successResponseWithData( $nextOfKinResource, 'Next of Kin added', 200);
+        $nextOfKinData['user_id'] = $userID;
+        $nextOfKin = $this->nextOfKinRepository->createOrUpdate( $userID, $nextOfKinData );
+        $userResource = new UserResource( $user );
+        $userResource->load('nextOfKin');
+        return ApiResponse::successResponseWithData( $userResource, 'Next of Kin updated', 200);
     }
 
-    public function update( NextOfKinRequest $request, $id)
+    public function delete( )
     {
-        $nextOfKin = NextOfKin::find( $id );
+
         $userId = auth()->user()->id;
-        if( $nextOfKin ){
-            if( $nextOfKin->user_id == $userId ){
-                $nextOfKinData = $request->validated();
-                $nextOfKinToUpdate = $this->nextOfKinRepository->update( $id, $nextOfKinData );
-                $nextOfKinResource = new NextOfKinResource( $nextOfKinToUpdate );
-                return ApiResponse::successResponseWithData( $nextOfKinResource, 'Next of kin updated successfully', 200 );
-            } else{
-                return ApiResponse::errorResponse('You are unauthorized to update this next of kin details', 403);
-            }
-
-        } else{
-            return ApiResponse::errorResponse('Next of kin details not found', 404);
-        }
-
-    }
-
-    public function delete( $id )
-    {
-        $nextOfKin = NextOfKin::find( $id );
-        $userId = auth()->user()->id;
+        $nextOfKin = NextOfKin::where( 'user_id', $userId )->first();
 
         if( $nextOfKin ){
-            if( $nextOfKin->user_id == $userId){
-                $nextOfKin->delete();
-                return ApiResponse::successResponse('Next of kin details deleted', 200);
-            } else{
-                return ApiResponse::errorResponse('You are unauthorized to delete this next of kin details', 403);
-            }
+        $nextOfKin->delete();
+        return ApiResponse::successResponse( 'Next of kin details deleted', 200 );
         } else{
-            return ApiResponse::errorResponse('Next of kin details not found', 404);
+            return ApiResponse::errorResponse( 'Next of kin details not found', 404 );
         }
     }
 }

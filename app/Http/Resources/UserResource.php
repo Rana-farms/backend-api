@@ -9,27 +9,18 @@ class UserResource extends JsonResource
 
     public function toArray($request)
     {
-        $roleId = $this->role_id;
-        if( $roleId === 1 ){
-            $profile = new AdminResource( $this->profile );
-        }
-
-        if( $roleId === 9 ){
-            $profile = new InvestorResource( $this->profile );
-        }
-
-        if( $roleId === 18 ){
-            $profile = new EmployeeResource($this->profile);
-        }
-
-
         return [
             'id' => $this->id,
             'email' => $this->email,
+            'fullname' => $this->fullname,
+            'address' => $this->address,
             'username' => $this->username,
+            'emailVerifiedStatus' => $this->is_verified,
             'status' => $this->isActive,
             'role' => new RoleResource( $this->role ),
-            'profile' => $profile,
+            'nextOfKin' => new NextOfKinResource( $this->whenLoaded('nextOfKin') ),
+            'bank' => new UserBankResource( $this->whenLoaded('bank') ),
+            'wallet' => new WalletResource( $this->whenLoaded('wallet') ),
         ];
     }
 }

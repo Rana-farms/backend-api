@@ -5,14 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Investor extends Model
+class UserInvestment extends Model
 {
     use HasFactory;
-
-    protected $fillable = [
-        'fullname',
-        'address',
-        'phone',
-        'user_id',
-    ];
 }

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateInvestorsTable extends Migration
+class CreateWalletsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,12 @@ class CreateInvestorsTable extends Migration
      */
     public function up()
     {
-        Schema::create('investors', function (Blueprint $table) {
+        Schema::create('wallets', function (Blueprint $table) {
             $table->id();
             $table->integer('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users');
-            $table->string('fullname')->nullable();
-            $table->string('phone')->unique()->nullable();
-            $table->string('address')->nullable();
+            $table->float('balance', 10, 2)->default(0.00);
+            $table->tinyInteger('status')->default(1);
             $table->timestamps();
         });
     }
@@ -31,6 +30,6 @@ class CreateInvestorsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('investors');
+        Schema::dropIfExists('wallets');
     }
 }

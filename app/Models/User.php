@@ -17,6 +17,10 @@ class User extends Authenticatable implements MustVerifyEmail
         'password',
         'status',
         'username',
+        'fullname',
+        'address',
+        'phone',
+        'profile_completed',
         'role_id',
     ];
 
@@ -25,7 +29,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'remember_token',
     ];
 
-    protected $appends = ['isActive'];
+    protected $appends = ['isActive', 'is_verified' ];
 
 
     protected $casts = [
@@ -41,32 +45,32 @@ class User extends Authenticatable implements MustVerifyEmail
         return 'inactive';
     }
 
+    public function getIsVerifiedAttribute(){
+
+        if( ! empty( $this->email_verified_at ) ){
+            return 'verified';
+        }
+        return 'unverified';
+    }
+
     public function role()
     {
         return $this->belongsTo(Role::class);
     }
 
-    public function nextOfKins()
+    public function nextOfKin()
     {
-        return $this->hasMany(NextOfKin::class);
+        return $this->hasOne(NextOfKin::class);
     }
 
-    public function profile(){
-        $userRole = $this->role_id;
+    public function wallet()
+    {
+        return $this->hasOne(Wallet::class);
+    }
 
-        if( $userRole === 1){
-            return $this->hasOne(Admin::class, 'user_id');
-        }
-
-        if( $userRole === 9){
-            return $this->hasOne(Investor::class, 'user_id');
-        }
-
-        if( $userRole === 18 ){
-            return $this->hasOne(Employee::class, 'user_id');
-        }
-
-        return '';
+    public function bank()
+    {
+        return $this->hasOne(UserBank::class);
     }
 
     public static function boot() {

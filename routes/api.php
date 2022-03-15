@@ -12,6 +12,7 @@ use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\VerificationController;
 use App\Http\Controllers\API\PasswordController;
 use App\Http\Controllers\API\NextOfKinController;
+use App\Http\Controllers\API\InvestmentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,6 +32,7 @@ Route::group(['middleware' => ['json']], function () {
     Route::post('verify-code', [VerificationController::class, 'verifyCode'])->name('verify-code');
     Route::post('resend-verify-code', [VerificationController::class, 'resendVerifyCode'])->name('resend-verify-code');
     Route::get('banks', [BankController::class, 'index']);
+    Route::post('user-exists', [UserController::class, 'checkIfUserExist']);
 
     //Authenticated Routes Group
     Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
@@ -38,17 +40,17 @@ Route::group(['middleware' => ['json']], function () {
         // Investors Route
         Route::group(['prefix' => 'investor', 'middleware' => ['investor']], function () {
             Route::put('profile', [InvestorController::class, 'update']);
-
-            Route::get('banks', [UserBankController::class, 'index']);
-            Route::post('bank', [UserBankController::class, 'store']);
-            Route::delete('bank/{id}', [UserBankController::class, 'delete']);
+            Route::get('profile', [InvestorController::class, 'profile']);
+            Route::post('update-bank', [UserBankController::class, 'store']);
+            Route::delete('bank', [UserBankController::class, 'delete']);
             Route::post('resolve-account', [UserBankController::class, 'resolveAccount']);
-
-            Route::get('next-of-kins', [NextOfKinController::class, 'index']);
             Route::post('next-of-kin', [NextOfKinController::class, 'store']);
-            Route::put('next-of-kin/{id}', [NextOfKinController::class, 'update']);
-            Route::delete('next-of-kin/{id}', [NextOfKinController::class, 'delete']);
+            Route::delete('next-of-kin', [NextOfKinController::class, 'delete']);
         });
+
+        Route::get('investments', [InvestmentController::class, 'index']);
+        Route::get('investment/{investment}', [InvestmentController::class, 'show']);
+        Route::post('confirm-minimum-unit', [InvestmentController::class, 'checkMinimumUnit']);
 
         // Admins Route
         Route::group(['prefix' => 'admin', 'middleware' => ['admin']], function () {
@@ -57,5 +59,8 @@ Route::group(['middleware' => ['json']], function () {
         // Employees Route
         Route::group(['prefix' => 'employee', 'middleware' => ['employee']], function () {
         });
+
+        //Change password
+        Route::post('change-password', [PasswordController::class, 'changePassword']);
     });
 });

@@ -64,8 +64,8 @@ class PasswordController extends Controller
     {
         $passwordData = $request->validated();
 
-        $user = User::findOrFail(auth()->user()->user_id);
-        if (password_verify($passwordData['old_password'], $user->password)) {
+        $user = User::findOrFail(auth()->user()->id);
+        if ( password_verify($passwordData['old_password'], $user->password ) ) {
             $user->password = Hash::make($passwordData['password']);
             if ($user->save()) {
                 return ApiResponse::successResponse('Password change successful', 200);

@@ -7,11 +7,13 @@ use App\Repositories\RepositoryInterfaces\InvestorRepositoryInterface;
 use App\Repositories\RepositoryInterfaces\AdminRepositoryInterface;
 use App\Repositories\RepositoryInterfaces\EmployeeRepositoryInterface;
 use App\Repositories\RepositoryInterfaces\NextOfKinRepositoryInterface;
+use App\Repositories\RepositoryInterfaces\WalletRepositoryInterface;
 use App\Repositories\UserRepository;
 use App\Repositories\InvestorRepository;
 use App\Repositories\AdminRepository;
 use App\Repositories\EmployeeRepository;
 use App\Repositories\NextOfKinRepository;
+use App\Repositories\WalletRepository;
 
 class RepositoriesServiceProvider extends ServiceProvider
 {
@@ -38,6 +40,7 @@ class RepositoriesServiceProvider extends ServiceProvider
         $this->app->bind( AdminRepositoryInterface::class, AdminRepository::class );
         $this->app->bind( EmployeeRepositoryInterface::class, EmployeeRepository::class );
         $this->app->bind( NextOfKinRepositoryInterface::class, NextOfKinRepository::class );
+        $this->app->bind( WalletRepositoryInterface::class, WalletRepository::class );
 
     }
 }

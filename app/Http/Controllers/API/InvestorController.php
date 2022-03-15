@@ -15,17 +15,27 @@ class InvestorController extends Controller
     $this->investorRepository = $investorRepository;
     }
 
-    public function update( UpdateInvestorProfile $request)
+    public function profile()
+    {
+        $userID = auth()->user()->id;
+        $user = User::find( $userID );
+        $userResource = new UserResource( $user );
+        $userResource->load( 'nextOfKin', 'bank', 'wallet' );
+        return ApiResponse::successResponseWithData( $userResource, 'Investor profile', 200 );
+    }
+
+    public function update( UpdateInvestorProfile $request )
     {
         $userId = auth()->user()->id;
-        $getInvestor = User::find( $userId );
-        if( $getInvestor ){
-        $profileData = $request->validated();
-        $updateInvestor = $this->investorRepository->update( $userId, $profileData );
-        $investorResource = new UserResource( $getInvestor );
-        return ApiResponse::successResponseWithData( $investorResource, 'Investor updated successfully', 200 );
+        $user = User::find( $userId );
+        if( $user ){
+        $data = $request->validated();
+        $updateProfile = $user->update( $data );
+        $userResource = new UserResource( $user );
+        $userResource->load( 'nextOfKin', 'bank', 'wallet' );
+        return ApiResponse::successResponseWithData( $userResource, 'Profile updated successfully', 200 );
         } else{
-            return ApiResponse::errorResponse( 'Investor not found', 404);
+            return ApiResponse::errorResponse( 'Profile not found', 404);
         }
 
     }

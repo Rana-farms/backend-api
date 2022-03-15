@@ -23,4 +23,9 @@ trait ApiResponse
     {
         return response()->json([ 'success' => false, 'message' => $message ], $code );
     }
+
+    public static function errorResponseWithData( $data = [], $message = 'An error occured', $code = 400 )
+    {
+        return response()->json([ 'success' => false, 'message' => $message, 'data' => $data ], $code );
+    }
 }

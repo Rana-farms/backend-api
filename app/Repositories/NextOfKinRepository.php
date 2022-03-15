@@ -1,22 +1,20 @@
 <?php
-
 namespace App\Repositories;
 use App\Models\NextOfKin;
 
 class NextOfKinRepository implements RepositoryInterfaces\NextOfKinRepositoryInterface
 {
 
-    public function create(array $data)
+    public function createOrUpdate( int $userID, array $data )
     {
-        $nextOfKin = NextOfKin::create( $data );
-        return $nextOfKin;
-    }
+        $nextOfKin = NextOfKin::where('user_id', $userID)->first();
 
-    public function update(int $id, array $data)
-    {
-        $nextOfKin = NextOfKin::find( $id );
-        $nextOfKin->update( $data );
-        return $nextOfKin;
+            if( $nextOfKin ){
+                $nextOfKin->update( $data );
+            } else{
+                $nextOfKin = NextOfKin::create( $data );
+            }
+
     }
 
     public function getById( int $id )
