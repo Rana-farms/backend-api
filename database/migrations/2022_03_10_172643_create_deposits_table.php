@@ -21,7 +21,7 @@ class CreateDepositsTable extends Migration
             $table->foreign('investment_id')->references('id')->on('investments');
             $table->float('amount', 10, 2)->default(0.00);
             $table->integer('number_of_units');
-            $table->tinyInteger('status')->default(1);
+            $table->tinyInteger('status')->default(0);
             $table->timestamps();
         });
     }

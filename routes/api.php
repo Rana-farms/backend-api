@@ -13,7 +13,7 @@ use App\Http\Controllers\API\VerificationController;
 use App\Http\Controllers\API\PasswordController;
 use App\Http\Controllers\API\NextOfKinController;
 use App\Http\Controllers\API\InvestmentController;
-
+use App\Http\Controllers\API\WithdrawalController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -46,6 +46,8 @@ Route::group(['middleware' => ['json']], function () {
             Route::post('resolve-account', [UserBankController::class, 'resolveAccount']);
             Route::post('next-of-kin', [NextOfKinController::class, 'store']);
             Route::delete('next-of-kin', [NextOfKinController::class, 'delete']);
+            Route::get('withdrawals', [WithdrawalController::class, 'index']);
+            Route::post('withdrawal', [WithdrawalController::class, 'store']);
         });
 
         Route::get('investments', [InvestmentController::class, 'index']);
