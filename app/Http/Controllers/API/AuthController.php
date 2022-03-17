@@ -50,7 +50,6 @@ class AuthController extends Controller
     public function register( CreateUserRequest $request )
     {
         $userData = $request->validated();
-        $userData['password'] = Hash::make( $userData['password'] );
         $userData['role_id'] = 9;
         $newUser = $this->userRepository->create( $userData );
         $userData['user_id'] = $newUser->id;

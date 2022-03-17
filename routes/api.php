@@ -1,6 +1,4 @@
 <?php
-
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\UserController;
 use App\Http\Controllers\API\AdminController;
@@ -14,6 +12,9 @@ use App\Http\Controllers\API\PasswordController;
 use App\Http\Controllers\API\NextOfKinController;
 use App\Http\Controllers\API\InvestmentController;
 use App\Http\Controllers\API\WithdrawalController;
+use App\Http\Controllers\API\UserInvestmentController;
+use App\Http\Controllers\API\PaymentController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -41,13 +42,24 @@ Route::group(['middleware' => ['json']], function () {
         Route::group(['prefix' => 'investor', 'middleware' => ['investor']], function () {
             Route::put('profile', [InvestorController::class, 'update']);
             Route::get('profile', [InvestorController::class, 'profile']);
+
             Route::post('update-bank', [UserBankController::class, 'store']);
             Route::delete('bank', [UserBankController::class, 'delete']);
             Route::post('resolve-account', [UserBankController::class, 'resolveAccount']);
+
             Route::post('next-of-kin', [NextOfKinController::class, 'store']);
             Route::delete('next-of-kin', [NextOfKinController::class, 'delete']);
+
             Route::get('withdrawals', [WithdrawalController::class, 'index']);
             Route::post('withdrawal', [WithdrawalController::class, 'store']);
+
+            Route::get('investments', [UserInvestmentController::class, 'index']);
+            Route::post('investment', [UserInvestmentController::class, 'store']);
+            Route::get('investment/{investment}', [UserInvestmentController::class, 'show']);
+            Route::delete('investment/{investment}', [UserInvestmentController::class, 'destroy']);
+
+            Route::post('process-payment', [PaymentController::class, 'processInvestmentPayment']);
+
         });
 
         Route::get('investments', [InvestmentController::class, 'index']);

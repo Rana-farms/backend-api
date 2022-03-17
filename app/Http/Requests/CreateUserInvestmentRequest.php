@@ -13,7 +13,7 @@ class CreateUserInvestmentRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,8 @@ class CreateUserInvestmentRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'investment_id' =>  ['required', 'integer', 'exists:investments,id'],
+            'units' =>  ['required', 'integer'],
         ];
     }
 }

@@ -15,12 +15,17 @@ class CreateUserInvestmentsTable extends Migration
     {
         Schema::create('user_investments', function (Blueprint $table) {
             $table->id();
+            $table->integer('user_id')->unsigned();
+            $table->foreign('user_id')->references('id')->on('users');
             $table->integer('investment_id')->unsigned();
             $table->foreign('investment_id')->references('id')->on('investments');
+            $table->integer('payment_id')->unsigned()->nullable();
+            $table->foreign('payment_id')->references('id')->on('payments');
             $table->integer('units');
             $table->float('amount');
-            $table->date('start_date');
-            $table->date('end_date');
+            $table->date('start_date')->nullable();
+            $table->date('end_date')->nullable();
+            $table->tinyInteger('is_paid')->default(0);
             $table->tinyInteger('status')->default(0);
             $table->timestamps();
         });
