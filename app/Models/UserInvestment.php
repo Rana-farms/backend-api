@@ -38,7 +38,7 @@ class UserInvestment extends Model
             return 'paid';
         }
 
-        return 'not paid';
+        return 'pending';
     }
 
 
