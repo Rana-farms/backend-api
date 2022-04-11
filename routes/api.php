@@ -15,6 +15,7 @@ use App\Http\Controllers\API\OrderController;
 use App\Http\Controllers\API\WithdrawalController;
 use App\Http\Controllers\API\UserInvestmentController;
 use App\Http\Controllers\API\PaymentController;
+use App\Http\Controllers\API\DocumentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -78,6 +79,12 @@ Route::group(['middleware' => ['json']], function () {
             Route::post('order/{code}', [OrderController::class, 'update']);
             Route::get('order/{code}', [OrderController::class, 'show']);
             Route::delete('order/{code}', [OrderController::class, 'destroy']);
+
+            Route::get('documents', [DocumentController::class, 'index']);
+            Route::post('document', [DocumentController::class, 'store']);
+            Route::post('document/{code}', [DocumentController::class, 'update']);
+            Route::get('document/{code}', [DocumentController::class, 'show']);
+            Route::delete('document/{code}', [DocumentController::class, 'destroy']);
         });
 
         //Change password
