@@ -3,9 +3,8 @@
 namespace App\Http\Middleware;
 use Illuminate\Support\Facades\Auth;
 use Closure;
-use Illuminate\Http\Request;
 
-class Employee
+class SuperAdmin
 {
 
     public function handle($request, Closure $next)
@@ -14,6 +13,6 @@ class Employee
                 return $next($request);
          }
 
-        return response()->json('Unauthorized!, You are not an employee', 403);
+        return response()->json('Unauthorized!, You are not a super admin', 403);
     }
 }

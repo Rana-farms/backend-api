@@ -67,6 +67,6 @@ class Kernel extends HttpKernel
         'json' => \App\Http\Middleware\ForceJsonResponse::class,
         'investor' => \App\Http\Middleware\Investor::class,
         'admin' => \App\Http\Middleware\Admin::class,
-        'employee' => \App\Http\Middleware\Employee::class,
+        'superadmin' => \App\Http\Middleware\SuperAdmin::class,
     ];
 }

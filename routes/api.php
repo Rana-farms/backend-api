@@ -11,6 +11,7 @@ use App\Http\Controllers\API\VerificationController;
 use App\Http\Controllers\API\PasswordController;
 use App\Http\Controllers\API\NextOfKinController;
 use App\Http\Controllers\API\InvestmentController;
+use App\Http\Controllers\API\OrderController;
 use App\Http\Controllers\API\WithdrawalController;
 use App\Http\Controllers\API\UserInvestmentController;
 use App\Http\Controllers\API\PaymentController;
@@ -66,12 +67,17 @@ Route::group(['middleware' => ['json']], function () {
         Route::get('investment/{investment}', [InvestmentController::class, 'show']);
         Route::post('confirm-minimum-unit', [InvestmentController::class, 'checkMinimumUnit']);
 
-        // Admins Route
-        Route::group(['prefix' => 'admin', 'middleware' => ['admin']], function () {
+        // Super Admins Route
+        Route::group(['prefix' => 'admin', 'middleware' => ['superadmin']], function () {
         });
 
-        // Employees Route
-        Route::group(['prefix' => 'employee', 'middleware' => ['employee']], function () {
+        // All Admins Route
+        Route::group(['prefix' => 'admin', 'middleware' => ['admin']], function () {
+            Route::get('orders', [OrderController::class, 'index']);
+            Route::post('order', [OrderController::class, 'store']);
+            Route::post('order/{code}', [OrderController::class, 'update']);
+            Route::get('order/{code}', [OrderController::class, 'show']);
+            Route::delete('order/{code}', [OrderController::class, 'destroy']);
         });
 
         //Change password

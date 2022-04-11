@@ -9,7 +9,7 @@ class Admin
 {
     public function handle($request, Closure $next)
     {
-         if (Auth::user() &&  Auth::user()->role_id == 1) {
+         if (Auth::user() &&  Auth::user()->role_id == 1 || Auth::user()->role_id == 18) {
                 return $next($request);
          }
 

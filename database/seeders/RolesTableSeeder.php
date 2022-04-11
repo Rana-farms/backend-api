@@ -29,8 +29,8 @@ class RolesTableSeeder extends Seeder
 
         Role::create([
             'id' => '18',
-            'name' => 'Employee',
-            'access_level' => 'Employee'
+            'name' => 'Super Admin',
+            'access_level' => 'Super Admin'
         ]);
 
     }
