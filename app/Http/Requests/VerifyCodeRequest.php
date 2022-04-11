@@ -25,7 +25,7 @@ class VerifyCodeRequest extends FormRequest
     {
         return [
             'email' => 'required|email',
-            'code' => 'required|numeric'
+            'code' => 'required|string'
         ];
     }
 }

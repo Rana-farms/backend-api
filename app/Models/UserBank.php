@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class UserBank extends Model
 {
     use HasFactory;
- 
+
     protected $fillable = [
         'user_id',
         'bank_id',
@@ -18,7 +18,7 @@ class UserBank extends Model
         'account_no',
     ];
 
-    protected $appends = ['isActive', 'bankName'];
+    protected $appends = ['isActive'];
 
     public function getisActiveAttribute(){
 
@@ -29,13 +29,8 @@ class UserBank extends Model
         return 'inactive';
     }
 
-    public function getBankNameAttribute(){
-         $bank = Bank::where('paystack_code', $this->code)->first();
-         if( $bank ){
-
-          return $bank->bank_name;
-          } else{
-              return '';
-          }
+    public function bank()
+    {
+        return $this->belongsTo(Bank::class, 'bank_id');
     }
 }

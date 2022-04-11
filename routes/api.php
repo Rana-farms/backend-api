@@ -34,6 +34,7 @@ Route::group(['middleware' => ['json']], function () {
     Route::post('resend-verify-code', [VerificationController::class, 'resendVerifyCode'])->name('resend-verify-code');
     Route::get('banks', [BankController::class, 'index']);
     Route::post('user-exists', [UserController::class, 'checkIfUserExist']);
+    Route::post('resolve-account', [UserBankController::class, 'resolveAccount']);
 
     //Authenticated Routes Group
     Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
@@ -45,7 +46,6 @@ Route::group(['middleware' => ['json']], function () {
 
             Route::post('update-bank', [UserBankController::class, 'store']);
             Route::delete('bank', [UserBankController::class, 'delete']);
-            Route::post('resolve-account', [UserBankController::class, 'resolveAccount']);
 
             Route::post('next-of-kin', [NextOfKinController::class, 'store']);
             Route::delete('next-of-kin', [NextOfKinController::class, 'delete']);

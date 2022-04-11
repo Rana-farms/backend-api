@@ -4,6 +4,8 @@ namespace App\Http\Controllers\API;
 use App\Http\Requests\ForgotPasswordRequest;
 use App\Http\Requests\ResetPasswordRequest;
 use App\Http\Requests\ChangePasswordRequest;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\ResetPasswordNotification;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
@@ -16,8 +18,11 @@ class PasswordController extends Controller
 {
     public function sendForgotPasswordLink(ForgotPasswordRequest $request)
     {
-        $token = Str::random(10);
-        $email = $request->input('email');
+        $token = Str::random(24);
+        $data = $request->validated();
+        $email = $data['email'];
+        $baseUrl = isset( $data['url'] ) ? $data['url'] : 'https://rana.com.ng';
+
         if (User::where('email', $email)->doesntExist()) {
 
             return ApiResponse::errorResponse( 'The supplied email does not exist!', 404 );
@@ -29,10 +34,12 @@ class PasswordController extends Controller
                 'token' => $token,
             ]);
             $user = User::firstWhere('email', $email);
-            $user->sendPasswordResetNotification($token);
+
+            $url = $baseUrl . '/reset-password/' . '?token=' . $token;
+            Notification::route('mail', $email)->notify( ( new ResetPasswordNotification( $url ) ) );
 
             return ApiResponse::successResponse('Please check your email address for reset password link', 200);
-        } catch (Exception  $exception) {
+        } catch (Exception $exception) {
 
             return ApiResponse::errorResponse($exception->getMessage(), 400);
         }
@@ -48,7 +55,8 @@ class PasswordController extends Controller
             return ApiResponse::errorResponse('Token supplied is invalid!', 400);
         }
 
-        $user = User::where('email', $isTokenValid->email)->first();
+        $userEmail = $isTokenValid->email;
+        $user = User::where('email', $userEmail)->first();
         if ( !$user ) {
 
             return ApiResponse::errorResponse('Invalid user', 404);

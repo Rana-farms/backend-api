@@ -10,6 +10,7 @@ class UserBankResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'bankId' => $this->bankId,
             'bankName' => $this->bankName,
             'accountName' => $this->account_name,
             'accountNumber' => $this->account_no,

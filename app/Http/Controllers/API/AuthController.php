@@ -51,6 +51,7 @@ class AuthController extends Controller
     {
         $userData = $request->validated();
         $userData['role_id'] = 9;
+        $userData['password'] = Hash::make($userData['password']);
         $newUser = $this->userRepository->create( $userData );
         $userData['user_id'] = $newUser->id;
 
