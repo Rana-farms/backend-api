@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\API;
+use Illuminate\Support\Facades\File;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateDocumentRequest;
 use App\Http\Requests\UpdateDocumentRequest;
@@ -23,6 +24,11 @@ class DocumentController extends Controller
     public function store(CreateDocumentRequest $request)
     {
         $data = $request->validated();
+
+            if ($request->hasFile('file')) {
+            $data['file'] = $request->file('file')->store('documents');
+          }
+
         $document = Document::create( $data );
         $documentResource = new DocumentResource( $document );
         return ApiResponse::successResponseWithData( $documentResource, 'Document created', 203 );
@@ -59,6 +65,8 @@ class DocumentController extends Controller
     {
         $document = Document::where( 'code', $code )->first();
         if( $document ){
+            $documentPath = public_path("docs/{$document->file}");
+            File::delete( $documentPath );
             $document->delete();
             return ApiResponse::successResponse('Document deleted', 200 );
         } else {
