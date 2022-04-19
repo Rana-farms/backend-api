@@ -22,6 +22,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'phone',
         'profile_completed',
         'role_id',
+        'identity_document',
+        'verified',
     ];
 
     protected $hidden = [
@@ -29,14 +31,14 @@ class User extends Authenticatable implements MustVerifyEmail
         'remember_token',
     ];
 
-    protected $appends = ['isActive', 'is_verified' ];
+    protected $appends = ['isActive', 'is_verified', 'email_verified' ];
 
 
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
 
-    public function getisActiveAttribute(){
+    public function getIsActiveAttribute(){
 
         if($this->status === 1){
             return 'active';
@@ -46,6 +48,15 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     public function getIsVerifiedAttribute(){
+
+        if($this->verified === 1){
+            return true;
+        }
+
+        return false;
+    }
+
+    public function getEmailVerifiedAttribute(){
 
         if( ! empty( $this->email_verified_at ) ){
             return 'verified';

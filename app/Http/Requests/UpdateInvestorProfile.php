@@ -30,6 +30,7 @@ class UpdateInvestorProfile extends FormRequest
             'fullname' =>  [ 'required', 'string', 'max:255'],
             'address' =>  ['required', 'string', 'max:255'],
             'phone' => ['required', 'digits:11', Rule::unique('users')->ignore( auth()->user()->id )],
+            'identity_document' => ['image', 'mimes:png,jpg,jpeg', 'max:5000'],
         ];
     }
 }

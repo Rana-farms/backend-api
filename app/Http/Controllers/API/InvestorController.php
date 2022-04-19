@@ -30,6 +30,11 @@ class InvestorController extends Controller
         $user = User::find( $userId );
         if( $user ){
         $data = $request->validated();
+
+        if ($request->hasFile('identity_document')) {
+            $data['identity_document'] = $request->file('identity_document')->store('identity');
+          }
+
         $updateProfile = $user->update( $data );
         $userResource = new UserResource( $user );
         $userResource->load( 'nextOfKin', 'bank', 'wallet' );
