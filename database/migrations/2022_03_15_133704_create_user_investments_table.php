@@ -19,8 +19,7 @@ class CreateUserInvestmentsTable extends Migration
             $table->foreign('user_id')->references('id')->on('users');
             $table->integer('investment_id')->unsigned();
             $table->foreign('investment_id')->references('id')->on('investments');
-            $table->integer('payment_id')->unsigned()->nullable();
-            $table->foreign('payment_id')->references('id')->on('payments');
+            $table->string('payment_reference')->unique();
             $table->integer('units');
             $table->float('amount');
             $table->date('start_date')->nullable();

@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers\API;
-
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateWithdrawalRequest;
 use App\Http\Resources\WithdrawalResource;
@@ -55,16 +54,6 @@ class WithdrawalController extends Controller
         }
 
 
-    }
-
-    public function show($id)
-    {
-        //
-    }
-
-    public function update(Request $request, $id)
-    {
-        //
     }
 
 }

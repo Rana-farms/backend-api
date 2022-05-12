@@ -1,17 +1,21 @@
 <?php
 
 namespace App\Http\Controllers\API;
-
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateUserInvestmentRequest;
 use App\Http\Resources\UserInvestmentResource;
 use App\Models\Investment;
 use App\Models\UserInvestment;
 use App\Traits\ApiResponse;
+use Illuminate\Support\Facades\Http;
 use Carbon\Carbon;
 
 class UserInvestmentController extends Controller
 {
+
+    public function __construct(){
+        $this->secret_key = config('app.secretKey');
+    }
 
     public function index()
     {
@@ -25,27 +29,41 @@ class UserInvestmentController extends Controller
     public function store(CreateUserInvestmentRequest $request)
     {
         $data = $request->validated();
-        $userId = auth()->user()->id;
-        $data['user_id'] = $userId;
+        $user = auth()->user();
+        $data['user_id'] = $user->id;
         $getInvestment = Investment::find($data['investment_id']);
         $minimumUnits = $getInvestment->minimum_unit;
         $pricePerUnit = $getInvestment->unit_price;
+        $period = $getInvestment->lock_up_period;
+        $expectedAmount = $pricePerUnit * $data['units'];
+        $validPaymentReference = $this->verifyPayment( $data['payment_reference'] );
 
-        if ($data['units'] >= $minimumUnits) {
-            $amount = $pricePerUnit * $data['units'];
-            $data['amount'] = $amount;
-
-            $userInvestment = UserInvestment::create($data);
-            $userInvestmentResource = new UserInvestmentResource($userInvestment);
-            return ApiResponse::successResponseWithData($userInvestmentResource, 'Investment created', 203);
-        } else {
-
-            $data = [
-                'minimum_unit' => $minimumUnits,
-            ];
-
-            return ApiResponse::errorResponseWithData($data, 'Unit is below the required minimum unit for the selected investment', 400);
+        if( $user->verified !== 1 ){
+            return ApiResponse::errorResponse( 'Your profile isn\'t verified, so you can\'t make an investment at the moment', 403 );
         }
+
+        if( ! $validPaymentReference ){
+            return ApiResponse::errorResponse( 'Invalid payment reference', 403 );
+        }
+
+        if( $data['amount'] < $expectedAmount ){
+            return ApiResponse::errorResponse('Amount is below expected amount', 403);
+        }
+
+        if ( $data['units'] < $minimumUnits ) {
+            return ApiResponse::errorResponse( 'Unit is below the required minimum unit for the selected investment', 400);
+        }
+
+        $data['amount'] = $expectedAmount;
+        $data['is_paid'] = 1;
+        $data['status'] = 1;
+        $data['start_date'] = Carbon::now();
+        $data['end_date'] = Carbon::now()->addMonths( $period );
+
+        $userInvestment = UserInvestment::create( $data );
+        $userInvestmentResource = new UserInvestmentResource( $userInvestment );
+        return ApiResponse::successResponseWithData( $userInvestmentResource, 'Investment created', 203 );
+
     }
 
 
@@ -60,22 +78,6 @@ class UserInvestmentController extends Controller
             return ApiResponse::errorResponse('You are unauthorized to view this resource', 403);
         }
     }
-
-    public static function update($data)
-    {
-        $userInvestment = UserInvestment::find($data['investment_id']);
-
-        $data = [
-            'payment_id' => $data['payment_id'],
-            'status' => 1,
-            'is_paid' => 1,
-            'start_date' => Carbon::now(),
-            'end_date' => Carbon::now()->addMonths( $data['period'] ),
-        ];
-
-        $userInvestment->update($data);
-    }
-
 
     public function destroy(UserInvestment $investment)
     {
@@ -92,4 +94,15 @@ class UserInvestmentController extends Controller
             return ApiResponse::errorResponse('You are unauthorized to view this resource', 403);
         }
     }
+
+    public function verifyPayment(string $reference)
+    {
+        $response = Http::acceptJson()
+                            ->withHeaders([
+                                'Authorization' => "Bearer $this->secret_key",
+                            ])
+                            ->get('https://api.paystack.co/transaction/verify/' . $reference);
+                            return $response['status'];
+    }
 }
+

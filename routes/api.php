@@ -16,6 +16,7 @@ use App\Http\Controllers\API\WithdrawalController;
 use App\Http\Controllers\API\UserInvestmentController;
 use App\Http\Controllers\API\PaymentController;
 use App\Http\Controllers\API\DocumentController;
+use App\Http\Controllers\API\ROIController;
 
 /*
 |--------------------------------------------------------------------------
@@ -59,9 +60,6 @@ Route::group(['middleware' => ['json']], function () {
             Route::post('investment', [UserInvestmentController::class, 'store']);
             Route::get('investment/{investment}', [UserInvestmentController::class, 'show']);
             Route::delete('investment/{investment}', [UserInvestmentController::class, 'destroy']);
-
-            Route::post('process-payment', [PaymentController::class, 'processInvestmentPayment']);
-
         });
 
         Route::get('investments', [InvestmentController::class, 'index']);
@@ -70,6 +68,7 @@ Route::group(['middleware' => ['json']], function () {
 
         // Super Admins Route
         Route::group(['prefix' => 'admin', 'middleware' => ['superadmin']], function () {
+
         });
 
         // All Admins Route
@@ -85,9 +84,12 @@ Route::group(['middleware' => ['json']], function () {
             Route::post('document/{code}', [DocumentController::class, 'update']);
             Route::get('document/{code}', [DocumentController::class, 'show']);
             Route::delete('document/{code}', [DocumentController::class, 'destroy']);
+
+            Route::post('create-roi', [ROIController::class, 'store']);
         });
 
         //Change password
         Route::post('change-password', [PasswordController::class, 'changePassword']);
+        Route::post('verify-payment/{reference}', [UserInvestmentController::class, 'verifyPayment']);
     });
 });

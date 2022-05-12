@@ -12,7 +12,7 @@ class UserInvestment extends Model
     protected $fillable = [
         'user_id',
         'investment_id',
-        'payment_id',
+        'payment_reference',
         'units',
         'amount',
         'start_date',
@@ -39,6 +39,11 @@ class UserInvestment extends Model
         }
 
         return 'pending';
+    }
+
+    public function investment()
+    {
+        return $this->belongsTo(Investment::class);
     }
 
 
