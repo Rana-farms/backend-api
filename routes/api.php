@@ -46,6 +46,7 @@ Route::group(['middleware' => ['json']], function () {
         Route::group(['prefix' => 'investor', 'middleware' => ['investor']], function () {
             Route::put('profile', [InvestorController::class, 'update']);
             Route::get('profile', [InvestorController::class, 'profile']);
+            Route::get('dashboard-metrics', [InvestorController::class, 'getDashboardAnalytics']);
 
             Route::post('update-bank', [UserBankController::class, 'store']);
             Route::delete('bank', [UserBankController::class, 'delete']);

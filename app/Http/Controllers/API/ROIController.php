@@ -10,6 +10,12 @@ use App\Traits\ApiResponse;
 class ROIController extends Controller
 {
 
+    public function __construct()
+    {
+        $this->walletController = new WalletController();
+        $this->transactionController = new TransactionController();
+    }
+
     public function index()
     {
         //
@@ -19,7 +25,6 @@ class ROIController extends Controller
     public function store(CreateROIRequest $request)
     {
         $data =  $request->validated();
-
         $getUserInvestments = UserInvestment::where( 'investment_id', $data['investment_id'] )->get();
         $totalUnitsOwned = $getUserInvestments->sum('units');
             if( $getUserInvestments ){
@@ -34,6 +39,17 @@ class ROIController extends Controller
                             'investment_id' => $data['investment_id'],
                             'amount' => $amount,
                         ]);
+
+                        $addRoiToInvestorWalletBalance = $this->walletController->addRoiToInvestorWallet($userId, $amount);
+
+                        $transactionData = [
+                            'user_id' => $userId,
+                            'amount' => $amount,
+                            'transaction_type' => 'ROI',
+                            'status' => 1
+                        ];
+
+                        $createTransactionForTheRoiEvent = $this->transactionController->store($transactionData);
                     }
 
                  return ApiResponse::successResponse('ROI distributed successfully', 203 );

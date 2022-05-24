@@ -61,4 +61,6 @@ class InvestmentController extends Controller
             return ApiResponse::successResponse( 'Unit satisfies the required minimum unit for the selected investment', 200);
         }
     }
+
+
 }
