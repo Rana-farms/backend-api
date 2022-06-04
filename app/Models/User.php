@@ -12,6 +12,8 @@ class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+    CONST SUPERADMINEMAIL = 'veecthorpaul@gmail.com';
+
     protected $fillable = [
         'email',
         'password',
@@ -24,6 +26,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'role_id',
         'identity_document',
         'verified',
+        'email_verified_at',
     ];
 
     protected $hidden = [
@@ -31,7 +34,16 @@ class User extends Authenticatable implements MustVerifyEmail
         'remember_token',
     ];
 
-    protected $appends = ['isActive', 'is_verified', 'email_verified' ];
+    protected $appends = [
+        'isActive',
+        'is_verified',
+        'email_verified',
+        'investment_status',
+        'investment_trust',
+        'total_investment',
+        'total_received',
+        'current_investment',
+    ];
 
 
     protected $casts = [
@@ -39,29 +51,50 @@ class User extends Authenticatable implements MustVerifyEmail
     ];
 
     public function getIsActiveAttribute(){
-
-        if($this->status === 1){
-            return 'active';
-        }
-
-        return 'inactive';
-    }
+        return $this->status == 1 ? 'active' : 'inactive';
+   }
 
     public function getIsVerifiedAttribute(){
-
-        if($this->verified === 1){
-            return true;
-        }
-
-        return false;
+        return $this->verified == 1 ? true : false;
     }
 
     public function getEmailVerifiedAttribute(){
+        return ! empty( $this->email_verified_at ) ? 'verified' : 'unverified';
+    }
 
-        if( ! empty( $this->email_verified_at ) ){
-            return 'verified';
+    public function getInvestmentStatusAttribute(){
+        $investment = UserInvestment::whereUserId(1)->whereStatus(1)->first();
+        return $investment ? 'active' : 'inactive';
+    }
+
+    public function getInvestmentTrustAttribute(){
+        $investment = UserInvestment::whereUserId(1)->whereStatus(1)->first();
+        if($investment){
+            $getInvestment = Investment::find($investment->investment_id);
+            $investmentName = $getInvestment ? $getInvestment->name : 'Agricultural Commodity Trust';
         }
-        return 'unverified';
+        return $investment ? $investmentName : 'null';
+    }
+
+    public function getTotalReceivedAttribute(){
+        $roi = ROIHistory::whereUserId($this->id)->get();
+        if($roi){
+            $total = $roi->sum('amount');
+        }
+        return $roi ? $total : 0.00;
+    }
+
+    public function getCurrentInvestmentAttribute(){
+        $investment = UserInvestment::whereUserId($this->id)->whereStatus(1)->latest()->first();
+        return $investment ? $investment->amount : 0.00;
+    }
+
+    public function getTotalInvestmentAttribute(){
+        $investment = UserInvestment::whereUserId($this->id)->get();
+        if($investment){
+            $total = $investment->sum('amount');
+        }
+        return $investment ? $total : 0.00;
     }
 
     public function role()
@@ -82,6 +115,16 @@ class User extends Authenticatable implements MustVerifyEmail
     public function bank()
     {
         return $this->hasOne(UserBank::class);
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class, 'user_id');
+    }
+
+    public function investments()
+    {
+        return $this->hasMany(UserInvestment::class, 'user_id');
     }
 
     public static function boot() {

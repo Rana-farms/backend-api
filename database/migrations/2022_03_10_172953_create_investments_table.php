@@ -17,6 +17,7 @@ class CreateInvestmentsTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('trustee');
+            $table->bigInteger('total_units');
             $table->integer('minimum_unit');
             $table->float('unit_price', 10, 2)->default(0.00);
             $table->integer('lock_up_period');

@@ -24,14 +24,15 @@ class CreateWithdrawalRequest extends FormRequest
     public function rules()
     {
         return [
-            'amount' => ['required', 'numeric', 'min:100000'],
+            'amount' => ['required', 'numeric', 'min:50000'],
+            'password' => ['required', 'string', 'min:6']
         ];
     }
 
     public function messages()
     {
         return [
-            'amount.min' => 'The minimum amount to withdraw is 100,000',
+            'amount.min' => 'The minimum amount to withdraw is 50,000',
         ];
     }
 }

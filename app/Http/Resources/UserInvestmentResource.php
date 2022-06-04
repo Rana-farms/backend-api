@@ -15,6 +15,7 @@ class UserInvestmentResource extends JsonResource
             'investmentId' => $this->investment_id,
             'investmentName' => $this->investment ? $this->investment->name : '',
             'amount' => $this->amount,
+            'units' => $this->units,
             'startDate' => $this->start_date ? Carbon::parse($this->start_date)->format('M d Y') : '',
             'dueDate' => $this->end_date ? Carbon::parse($this->end_date)->format('M d Y') : '',
             'isPaid' => $this->is_paid,

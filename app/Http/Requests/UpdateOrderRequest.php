@@ -20,11 +20,11 @@ class UpdateOrderRequest extends FormRequest
             'weight_received' =>  ['required', 'string', 'max:255'],
             'weight_loss' =>  ['required', 'string', 'max:255'],
             'order_status' => ['required', 'string', Rule::in(['Pending', 'Approved']) ],
-            'aggregation_status' => ['required', 'string', Rule::in(['Pending', 'Initiated', 'Approved']) ],
-            'negotiation_status' => ['required', 'string', Rule::in(['Pending', 'Initiated', 'Approved']) ],
-            'delivery_status' => ['required', 'string', Rule::in(['Pending', 'Initiated', 'Approved']) ],
-            'payment_status' => ['required', 'string', Rule::in(['Pending', 'Initiated', 'Approved']) ],
-            'produce_loading' => ['required', 'string', Rule::in(['Pending', 'Initiated', 'Approved']) ],
+            'aggregation_status' => ['required', 'string', Rule::in(['Pending', 'Initiated', 'Completed']) ],
+            'negotiation_status' => ['required', 'string', Rule::in(['Pending', 'Initiated', 'Completed']) ],
+            'delivery_status' => ['required', 'string', Rule::in(['Pending', 'Initiated', 'Completed']) ],
+            'payment_status' => ['required', 'string', Rule::in(['Pending', 'Initiated', 'Completed']) ],
+            'produce_loading' => ['required', 'string', Rule::in(['Pending', 'Initiated', 'Completed']) ],
         ];
     }
 }

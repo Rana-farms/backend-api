@@ -46,6 +46,7 @@ class ROIController extends Controller
                             'user_id' => $userId,
                             'amount' => $amount,
                             'transaction_type' => 'ROI',
+                            'type_id' => $createROI->id,
                             'status' => 1
                         ];
 

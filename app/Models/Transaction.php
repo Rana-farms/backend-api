@@ -13,6 +13,20 @@ class Transaction extends Model
         'user_id',
         'amount',
         'transaction_type',
+        'type_id',
         'status',
     ];
+
+    protected $appends = [
+        'completed_status',
+    ];
+
+    public function getCompletedStatusAttribute(){
+        return $this->status == 1 ? 'success' : 'pending';
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

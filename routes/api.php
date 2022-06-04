@@ -16,7 +16,9 @@ use App\Http\Controllers\API\WithdrawalController;
 use App\Http\Controllers\API\UserInvestmentController;
 use App\Http\Controllers\API\PaymentController;
 use App\Http\Controllers\API\DocumentController;
+use App\Http\Controllers\API\ProfileController;
 use App\Http\Controllers\API\ROIController;
+use App\Http\Controllers\API\TransactionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,9 +46,8 @@ Route::group(['middleware' => ['json']], function () {
 
         // Investors Route
         Route::group(['prefix' => 'investor', 'middleware' => ['investor']], function () {
-            Route::put('profile', [InvestorController::class, 'update']);
-            Route::get('profile', [InvestorController::class, 'profile']);
             Route::get('dashboard-metrics', [InvestorController::class, 'getDashboardAnalytics']);
+            Route::get('dashboard-graph', [InvestorController::class, 'getDashboardGraph']);
 
             Route::post('update-bank', [UserBankController::class, 'store']);
             Route::delete('bank', [UserBankController::class, 'delete']);
@@ -67,30 +68,49 @@ Route::group(['middleware' => ['json']], function () {
         Route::get('investment/{investment}', [InvestmentController::class, 'show']);
         Route::post('confirm-minimum-unit', [InvestmentController::class, 'checkMinimumUnit']);
 
-        // Super Admins Route
-        Route::group(['prefix' => 'admin', 'middleware' => ['superadmin']], function () {
-
-        });
-
         // All Admins Route
         Route::group(['prefix' => 'admin', 'middleware' => ['admin']], function () {
-            Route::get('orders', [OrderController::class, 'index']);
-            Route::post('order', [OrderController::class, 'store']);
-            Route::post('order/{code}', [OrderController::class, 'update']);
-            Route::get('order/{code}', [OrderController::class, 'show']);
-            Route::delete('order/{code}', [OrderController::class, 'destroy']);
+            Route::post('order', [OrderController::class, 'store'])->middleware('superadmin');
+            Route::post('order/{code}', [OrderController::class, 'update'])->middleware('superadmin');
+            Route::delete('order/{code}', [OrderController::class, 'destroy'])->middleware('superadmin');
 
-            Route::get('documents', [DocumentController::class, 'index']);
             Route::post('document', [DocumentController::class, 'store']);
             Route::post('document/{code}', [DocumentController::class, 'update']);
-            Route::get('document/{code}', [DocumentController::class, 'show']);
-            Route::delete('document/{code}', [DocumentController::class, 'destroy']);
+            Route::delete('document/{code}', [DocumentController::class, 'destroy'])->middleware('superadmin');
 
             Route::post('create-roi', [ROIController::class, 'store']);
+
+            Route::get('investors', [InvestorController::class, 'index']);
+            Route::post('verify-user/{user}', [UserController::class, 'verifyUser']);
+            Route::post('invite-admin', [AdminController::class, 'store'])->middleware('superadmin');
+            Route::post('remove-admin', [AdminController::class, 'delete'])->middleware('superadmin');
+            Route::post('manage-role', [AdminController::class, 'updateRole']);
+            Route::get('withdrawals', [WithdrawalController::class, 'allWithdrawals']);
+            Route::get('withdrawal/{withdrawal}', [WithdrawalController::class, 'show']);
+            Route::get('admins', [AdminController::class, 'index']);
+            Route::get('users/{user}', [UserController::class, 'show']);
+            Route::get('dashboard-metrics', [AdminController::class, 'getDashboardAnalytics']);
+            Route::get('dashboard-graph', [AdminController::class, 'getDashboardGraph']);
+            Route::get('transactions', [TransactionController::class, 'index']);
+            Route::post('approve-withdrawal/{withdrawal}', [WithdrawalController::class, 'confirm'])->middleware('superadmin');
+            Route::post('approve-withdrawal-manual/{withdrawal}', [WithdrawalController::class, 'manualConfirm'])->middleware('superadmin');
         });
+
+        //Documents
+        Route::get('documents', [DocumentController::class, 'index']);
+        Route::get('document/{code}', [DocumentController::class, 'show']);
+
+        //Orders
+        Route::get('orders', [OrderController::class, 'index']);
+        Route::get('order/{code}', [OrderController::class, 'show']);
+
+        //Manage Profile
+        Route::put('profile', [ProfileController::class, 'update']);
+        Route::get('profile', [ProfileController::class, 'index']);
 
         //Change password
         Route::post('change-password', [PasswordController::class, 'changePassword']);
         Route::post('verify-payment/{reference}', [UserInvestmentController::class, 'verifyPayment']);
+        Route::post('logout',[AuthController::class, 'logout']);
     });
 });

@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Notification;
 use App\Http\Requests\UserExistsRequest;
+use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Notifications\NotifyInvestorOfVerifiedProfile;
 use App\Traits\ApiResponse;
 
 class UserController extends Controller
@@ -17,5 +20,20 @@ class UserController extends Controller
         } else{
             return ApiResponse::successResponse( 'User not found', 200 );
         }
+    }
+
+    public function verifyUser(User $user)
+    {
+        $user->update(['verified' => true]);
+        $userResource = new UserResource($user);
+        Notification::route('mail', $user->email )->notify( (new NotifyInvestorOfVerifiedProfile( $user )) );
+        return ApiResponse::successResponseWithData($userResource, 'User verified', 200);
+    }
+
+    public function show(User $user)
+    {
+        $userResource = new UserResource($user);
+        $userResource->load( 'nextOfKin', 'bank', 'wallet', 'transactions', 'investments' );
+        return ApiResponse::successResponseWithData($userResource, 'User retrived', 200);
     }
 }

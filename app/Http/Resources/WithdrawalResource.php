@@ -11,7 +11,9 @@ class WithdrawalResource extends JsonResource
         return [
             'id' => $this->id,
             'amount' => $this->amount,
-            'status' => $this->is_approved,
+            'status' => $this->status,
+            'user' => $this->user,
+            'bank' =>  new UserBankResource($this->bank),
         ];
     }
 }

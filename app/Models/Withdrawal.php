@@ -9,21 +9,24 @@ class Withdrawal extends Model
 {
     use HasFactory;
 
+    CONST PROCESSING = 'Processing';
+    CONST COMPLETED = 'Completed';
+    CONST PENDING = 'Pending';
+
     protected $fillable = [
         'user_id',
         'amount',
         'status',
+        'payment_reference',
     ];
 
-    protected $appends = ['isApproved'];
-
-    public function getisApprovedAttribute(){
-
-        if($this->status == 1){
-            return 'success';
-        }
-
-        return 'pending';
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 
+    public function bank()
+    {
+        return $this->belongsTo(UserBank::class, 'user_id');
+    }
 }

@@ -27,4 +27,13 @@ class WalletController extends Controller
         $wallet->balance = $wallet->balance + $amount;
         $wallet->save();
     }
+
+    public function getAllInvestorsWalletBalance()
+    {
+        $wallets = Wallet::get();
+        if($wallets){
+            $total = $wallets->sum('balance');
+        }
+        return $wallets ? $total : 0.00;
+    }
 }

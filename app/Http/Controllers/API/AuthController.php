@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Wallet;
 use App\Traits\ApiResponse;
+use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
@@ -93,5 +94,12 @@ class AuthController extends Controller
             ];
 
             UserBank::create( $userBankData );
+    }
+
+    public function logout(Request $request)
+    {
+        $user = request()->user();
+        $user->tokens()->where('id', $user->currentAccessToken()->id)->delete();
+        return ApiResponse::successResponse('Logout successful', 200);
     }
 }

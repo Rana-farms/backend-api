@@ -18,6 +18,7 @@ class CreateTransactionsTable extends Migration
             $table->integer('user_id')->unsigned();
             $table->foreign('user_id')->references('id')->on('users');
             $table->string('transaction_type');
+            $table->integer('type_id');
             $table->float('amount', 10, 2)->default(0.00);
             $table->tinyInteger('status')->default(0);
             $table->timestamps();

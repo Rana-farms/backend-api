@@ -8,6 +8,7 @@ use App\Models\Investment;
 use App\Models\UserInvestment;
 use App\Traits\ApiResponse;
 use Illuminate\Support\Facades\Http;
+use App\Http\Controllers\API\TransactionController;
 use Carbon\Carbon;
 
 class UserInvestmentController extends Controller
@@ -15,6 +16,7 @@ class UserInvestmentController extends Controller
 
     public function __construct(){
         $this->secret_key = config('app.secretKey');
+        $this->transactionController = new TransactionController();
     }
 
     public function index()
@@ -38,7 +40,7 @@ class UserInvestmentController extends Controller
         $expectedAmount = $pricePerUnit * $data['units'];
         $validPaymentReference = $this->verifyPayment( $data['payment_reference'] );
 
-        if( $user->verified !== 1 ){
+        if( $user->verified != 1 ){
             return ApiResponse::errorResponse( 'Your profile isn\'t verified, so you can\'t make an investment at the moment', 403 );
         }
 
@@ -61,6 +63,12 @@ class UserInvestmentController extends Controller
         $data['end_date'] = Carbon::now()->addMonths( $period );
 
         $userInvestment = UserInvestment::create( $data );
+
+        $data['transaction_type'] = 'Investment';
+        $data['status'] = 1;
+        $data['type_id'] = $userInvestment->id;
+        $createTransaction = $this->transactionController::store( $data );
+
         $userInvestmentResource = new UserInvestmentResource( $userInvestment );
         return ApiResponse::successResponseWithData( $userInvestmentResource, 'Investment created', 203 );
 
