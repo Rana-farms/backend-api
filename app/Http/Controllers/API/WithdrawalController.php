@@ -67,15 +67,23 @@ class WithdrawalController extends Controller
 
     public function confirm(Withdrawal $withdrawal)
     {
-        if( $withdrawal->status != 'Pending'){
-            return ApiResponse::errorResponse('Withdrawal already processed', 400);
-        }
+        // if( $withdrawal->status != 'Pending'){
+        //     return ApiResponse::errorResponse('Withdrawal already processed', 400);
+        // }
 
         $investorId = $withdrawal->user_id;
         $investor = User::find($investorId);
-        $withdrawal->update(['status' => 'Processing']);
+        // $withdrawal->update(['status' => 'Processing']);
         $withdrawalResource = new WithdrawalResource($withdrawal);
-        // $processPayment = $this->paymentController::store( $investor );
+
+        $paymentData = [
+            'account_number' => 2216372074,
+            'bank_code' => 073,
+            'amount' => 1000,
+        ];
+
+       return $processPayment = $this->paymentController::initiateTransfer( $paymentData );
+
         WithdrawalEvent::dispatch($withdrawal, $investor, Withdrawal::PROCESSING);
         return ApiResponse::successResponseWithData($withdrawalResource, 'Withdrawal approved', 200);
     }
@@ -100,6 +108,5 @@ class WithdrawalController extends Controller
         $withdrawalResource = new WithdrawalResource($withdrawal);
         return ApiResponse::successResponseWithData($withdrawalResource, 'Withdrawal retrieved', 200);
     }
-
 
 }

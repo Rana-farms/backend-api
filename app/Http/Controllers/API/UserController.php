@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ContactUsRequest;
 use Illuminate\Support\Facades\Notification;
 use App\Http\Requests\UserExistsRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Notifications\NotifyAdminOfNewContactRequest;
 use App\Notifications\NotifyInvestorOfVerifiedProfile;
 use App\Traits\ApiResponse;
 
@@ -35,5 +37,13 @@ class UserController extends Controller
         $userResource = new UserResource($user);
         $userResource->load( 'nextOfKin', 'bank', 'wallet', 'transactions', 'investments' );
         return ApiResponse::successResponseWithData($userResource, 'User retrived', 200);
+    }
+
+    public function contactUs(ContactUsRequest $request)
+    {
+        $data = $request->validated();
+        Notification::route('mail', User::SUPERADMINEMAIL )->notify( (new NotifyAdminOfNewContactRequest( $data )) );
+
+        return ApiResponse::successResponse('Message sent successfully!', 200);
     }
 }

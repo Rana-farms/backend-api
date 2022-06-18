@@ -14,7 +14,7 @@ class OrderResource extends JsonResource
             'location' => $this->location,
             'weight' => $this->weight,
             'weightReceived' => $this->weight_received,
-            'weightLoss' => $this->weight_loss,
+            'weightLoss' => $this->the_weight_loss,
             'aggregated' => $this->aggregated,
             'orderStatus' => $this->order_status,
             'aggregationStatus' => $this->aggregation_status,

@@ -5,10 +5,14 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateUserInvestmentRequest;
 use App\Http\Resources\UserInvestmentResource;
 use App\Models\Investment;
+use App\Models\User;
+use Illuminate\Support\Facades\Notification;
 use App\Models\UserInvestment;
 use App\Traits\ApiResponse;
 use Illuminate\Support\Facades\Http;
 use App\Http\Controllers\API\TransactionController;
+use App\Notifications\NotifyAdminOfRedeemedCapitalFunds;
+use App\Notifications\NotifyInvestorOfRedeemedCapitalFunds;
 use Carbon\Carbon;
 
 class UserInvestmentController extends Controller
@@ -17,6 +21,7 @@ class UserInvestmentController extends Controller
     public function __construct(){
         $this->secret_key = config('app.secretKey');
         $this->transactionController = new TransactionController();
+        $this->walletController = new WalletController();
     }
 
     public function index()
@@ -111,6 +116,42 @@ class UserInvestmentController extends Controller
                             ])
                             ->get('https://api.paystack.co/transaction/verify/' . $reference);
                             return $response['status'];
+    }
+
+    public function redeemTrust(UserInvestment $investment)
+    {
+        $user = auth()->user();
+        $today = Carbon::now()->format('Y-m-d');
+        $amount = $investment->amount;
+        $isDue =  $investment->end_date <= $today ? 'true' : 'false';
+        if( $investment->user_id != $user->id){
+            return ApiResponse::errorResponse('You don\'t own the selected investment', 400);
+        }
+
+        if( $isDue == 'false'){
+            return ApiResponse::errorResponse('The lock up period for the selected investment isn\'t over', 400);
+        }
+
+        if( $investment->status != 1){
+            return ApiResponse::errorResponse('Capital funds is already redeemed', 400);
+        }
+
+        $investment->update(['status' => 0]);
+        $fundWallet = $addRoiToInvestorWalletBalance = $this->walletController->addRoiToInvestorWallet($user->id, $amount);
+
+        $transactionData = [
+            'user_id' => $user->id,
+            'amount' => $amount,
+            'transaction_type' => 'Redeem Unit Shares',
+            'type_id' => $investment->id,
+            'status' => 1
+        ];
+
+        $createTransactionForTheRoiEvent = $this->transactionController->store($transactionData);
+        Notification::route('mail', $user->email )->notify( (new NotifyInvestorOfRedeemedCapitalFunds( auth()->user(), $investment )) );
+        Notification::route('mail', User::SUPERADMINEMAIL )->notify( (new NotifyAdminOfRedeemedCapitalFunds( auth()->user(), $investment )) );
+
+        return ApiResponse::successResponse('Capital funds redeemed successfully!', 200);
     }
 }
 

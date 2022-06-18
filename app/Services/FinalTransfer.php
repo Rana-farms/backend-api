@@ -21,27 +21,27 @@ class FinalTransfer
         "otp" => "928783" // Fake OTP
       ];
       $fields_string = http_build_query($fields);
-      
+
       //open connection
       $ch = curl_init();
-      
+
       //set the url, number of POST vars, POST data
       curl_setopt($ch,CURLOPT_URL, $url);
       curl_setopt($ch,CURLOPT_POST, true);
       curl_setopt($ch,CURLOPT_POSTFIELDS, $fields_string);
       curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-        "Authorization: Bearer ".('sk_test_17e8bb75cbab4ce27af543711f0cb71ad18f1677'),
+        "Authorization: Bearer ".('sk_test_0153f88659f450aa4a6e2cede0c6af12735b2582'),
         "Cache-Control: no-cache",
       ));
-      
+
       //So that curl_exec returns the contents of the cURL; rather than echoing it
-      curl_setopt($ch,CURLOPT_RETURNTRANSFER, true); 
-      
+      curl_setopt($ch,CURLOPT_RETURNTRANSFER, true);
+
       //execute post
       $result = curl_exec($ch);
-      
+
       $response = json_decode($result, true);
-      
+
       return $response;
     }
 

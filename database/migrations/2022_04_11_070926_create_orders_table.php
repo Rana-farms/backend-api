@@ -18,9 +18,9 @@ class CreateOrdersTable extends Migration
             $table->string('name');
             $table->string('location');
             $table->string('weight');
-            $table->string('weight_received');
-            $table->string('weight_loss');
-            $table->string('aggregated');
+            $table->string('weight_received')->nullable();
+            $table->string('weight_loss')->nullable();
+            $table->string('aggregated')->nullable();
             $table->enum('order_status', ['Pending', 'Approved'])->default('Pending');
             $table->enum('aggregation_status', ['Pending', 'Initiated', 'Completed'])->default('Pending');
             $table->enum('negotiation_status', ['Pending', 'Initiated', 'Completed'])->default('Pending');

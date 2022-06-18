@@ -7,7 +7,6 @@ use App\Models\Payment;
 use App\Services\TransferHistory;
 use App\Services\VerifyAccount;
 use App\Traits\ApiResponse;
-use Illuminate\Http\Request;
 
 class PaymentController extends Controller
 {
@@ -19,12 +18,12 @@ class PaymentController extends Controller
         return ApiResponse::successResponseWithData($paymentsResource, 'Payments retrieved', 200);
     }
 
-    public static function initiateTransfer(Request $request, VerifyAccount $act){
-
+    public static function initiateTransfer($data, VerifyAccount $act){
+        return $data;
         $data = [
-            'account_number' => '',
-            'bank_code' => '',
-            'amount' => '',
+            'account_number' => $data['account_number'],
+            'bank_code' => $data['bank_code'],
+            'amount' => $data['amount'],
             'reason' => 'Rana Withdrawal',
         ];
 		return $act->execute($data);

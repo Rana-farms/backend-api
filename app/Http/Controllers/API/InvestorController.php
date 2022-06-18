@@ -69,15 +69,22 @@ class InvestorController extends Controller
 
         if($roiForLastTwoMonths != 0){
             $subtractBothRoi = $roiForLastMonth - $roiForLastTwoMonths;
-            $percentageSinceLastMonths = round( $subtractBothRoi / $roiForLastTwoMonths * 100, 2 ) . '%';
+            $percentageSinceLastMonths = round( $subtractBothRoi / $roiForLastTwoMonths * 100, 2 );
         } else{
             $percentageSinceLastMonths = null;
+        }
+
+        if($capitalBalance != 0 && $netIncome != 0){
+            $monthlyNetIncome =  round( $netIncome / $capitalBalance * 100, 2 );
+        } else{
+            $monthlyNetIncome = 0;
         }
 
         $data = [
             'monthlyRoi' => $roiForLastMonth,
             'percentageSinceLastMonths' => $percentageSinceLastMonths,
             'netIncome' => $netIncome,
+            'monthlyNetIncome' => $monthlyNetIncome,
             'availableFunds' => $walletBalance,
             'capitalBalance' => $capitalBalance,
             'investments' => $investmentsResource,

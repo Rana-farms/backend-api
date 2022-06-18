@@ -37,7 +37,7 @@ class TransferRecipient
         curl_setopt($ch,CURLOPT_POST, true);
         curl_setopt($ch,CURLOPT_POSTFIELDS, $fields_string);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-          "Authorization: Bearer ".('sk_test_17e8bb75cbab4ce27af543711f0cb71ad18f1677'),
+          "Authorization: Bearer ".('sk_test_0153f88659f450aa4a6e2cede0c6af12735b2582'),
           "Cache-Control: no-cache",
         ));
 

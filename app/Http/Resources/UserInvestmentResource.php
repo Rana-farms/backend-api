@@ -19,6 +19,7 @@ class UserInvestmentResource extends JsonResource
             'startDate' => $this->start_date ? Carbon::parse($this->start_date)->format('M d Y') : '',
             'dueDate' => $this->end_date ? Carbon::parse($this->end_date)->format('M d Y') : '',
             'isPaid' => $this->is_paid,
+            'isDue' => $this->is_due,
             'status' => $this->is_active,
         ];
     }

@@ -40,6 +40,7 @@ Route::group(['middleware' => ['json']], function () {
     Route::get('banks', [BankController::class, 'index']);
     Route::post('user-exists', [UserController::class, 'checkIfUserExist']);
     Route::post('resolve-account', [UserBankController::class, 'resolveAccount']);
+    Route::post('contact-us', [UserController::class, 'contactUs']);
 
     //Authenticated Routes Group
     Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
@@ -62,6 +63,7 @@ Route::group(['middleware' => ['json']], function () {
             Route::post('investment', [UserInvestmentController::class, 'store']);
             Route::get('investment/{investment}', [UserInvestmentController::class, 'show']);
             Route::delete('investment/{investment}', [UserInvestmentController::class, 'destroy']);
+            Route::post('redeem-trust/{investment}', [UserInvestmentController::class, 'redeemTrust']);
         });
 
         Route::get('investments', [InvestmentController::class, 'index']);

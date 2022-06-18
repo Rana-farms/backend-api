@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 
 class UserInvestment extends Model
 {
@@ -21,7 +22,7 @@ class UserInvestment extends Model
         'status',
     ];
 
-    protected $appends = ['isActive', 'isPaid'];
+    protected $appends = ['isActive', 'isPaid', 'isDue'];
 
     public function getisActiveAttribute(){
 
@@ -39,6 +40,12 @@ class UserInvestment extends Model
         }
 
         return 'pending';
+    }
+
+    public function getisDueAttribute(){
+    $today = Carbon::now()->format('Y-m-d');
+
+    return $this->end_date <= $today ? true : false;
     }
 
     public function investment()
