@@ -39,12 +39,12 @@ class NotifyWithdrawalEvent
 
         if( $action == Withdrawal::PROCESSING ){
             Notification::route('mail', $investor['email'] )->notify( (new NotifyInvestorOfProcessedWithdrawal( $withdrawal, $investor )) );
-            Notification::route('mail', User::SUPERADMINEMAIL )->notify( (new NotifyAdminOfProcessedWithdrawal( $withdrawal, $investor )) );
+            Notification::route('mail', User::SUPERADMINEMAILS )->notify( (new NotifyAdminOfProcessedWithdrawal( $withdrawal, $investor )) );
         }
 
         if( $action == Withdrawal::COMPLETED ){
             Notification::route('mail', $investor['email'] )->notify( (new NotifyInvestorOfCompletedWithdrawal( $withdrawal, $investor )) );
-            Notification::route('mail', User::SUPERADMINEMAIL )->notify( (new NotifyAdminOfCompletedWithdrawal( $withdrawal, $investor )) );
+            Notification::route('mail', User::SUPERADMINEMAILS )->notify( (new NotifyAdminOfCompletedWithdrawal( $withdrawal, $investor )) );
         }
     }
 }

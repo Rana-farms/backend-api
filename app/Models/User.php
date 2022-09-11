@@ -12,7 +12,7 @@ class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    CONST SUPERADMINEMAIL = 'veecthorpaul@gmail.com';
+    CONST SUPERADMINEMAILS = ['veecthorpaul@gmail.com', 'admin@rana.com.ng'];
 
     protected $fillable = [
         'email',

@@ -42,7 +42,7 @@ class UserController extends Controller
     public function contactUs(ContactUsRequest $request)
     {
         $data = $request->validated();
-        Notification::route('mail', User::SUPERADMINEMAIL )->notify( (new NotifyAdminOfNewContactRequest( $data )) );
+        Notification::route('mail', User::SUPERADMINEMAILS )->notify( (new NotifyAdminOfNewContactRequest( $data )) );
 
         return ApiResponse::successResponse('Message sent successfully!', 200);
     }

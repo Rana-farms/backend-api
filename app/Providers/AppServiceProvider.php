@@ -39,20 +39,20 @@ class AppServiceProvider extends ServiceProvider
         Withdrawal::created( function( $withdrawal ) {
             $investor = User::find($withdrawal->user_id);
             Notification::route('mail', $investor->email )->notify( (new NotifyInvestorOfWithdrawal( $investor, $withdrawal )) );
-            Notification::route('mail', User::SUPERADMINEMAIL )->notify( (new NotifyAdminOfWithdrawal( $investor, $withdrawal )) );
+            Notification::route('mail', User::SUPERADMINEMAILS )->notify( (new NotifyAdminOfWithdrawal( $investor, $withdrawal )) );
         });
 
         User::created( function( $user ) {
             $role = $user->role_id;
             if($role == 9){
-                Notification::route('mail', User::SUPERADMINEMAIL )->notify( (new NotifyAdminOfNewInvestor( $user )) );
+                Notification::route('mail', User::SUPERADMINEMAILS )->notify( (new NotifyAdminOfNewInvestor( $user )) );
             }
         });
 
         UserInvestment::created( function( $userInvestment ) {
             $investor = User::find($userInvestment->user_id);
             $investment = Investment::find($userInvestment->investment_id);
-            Notification::route('mail', User::SUPERADMINEMAIL )->notify( (new NotifyAdminOfNewInvestment( $investor, $investment, $userInvestment )) );
+            Notification::route('mail', User::SUPERADMINEMAILS )->notify( (new NotifyAdminOfNewInvestment( $investor, $investment, $userInvestment )) );
             Notification::route('mail', $investor->email )->notify( (new NotifyInvestorOfNewInvestment( $investor, $investment, $userInvestment )) );
         });
     }
