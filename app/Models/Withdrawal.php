@@ -27,6 +27,6 @@ class Withdrawal extends Model
 
     public function bank()
     {
-        return $this->belongsTo(UserBank::class, 'user_id');
+        return $this->belongsTo(UserBank::class, 'user_id', 'user_id');
     }
 }
